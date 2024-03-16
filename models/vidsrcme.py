@@ -60,7 +60,7 @@ async def get(dbid,s=None,e=None,l='eng'):
     )
     print(results)
     sub_seed = results[0][1] if results[0] else 1500
-    subtitles = await subtitle.subfetch(sub_seed,language) if sub_seed!=500 else 500
+    subtitles = await subtitle.subfetch(sub_seed,language) if sub_seed != 500 else []
     return [{
     # "name":'VidSrcPRO',
     # "data":{

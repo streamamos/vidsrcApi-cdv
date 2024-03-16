@@ -65,31 +65,25 @@ async def get(dbid,s=None,e=None,l='eng'):
     # Fetching m3u8 links from the provided URL
     m3u8_response = requests.get(results[1][0])
     m3u8_links = m3u8_response.text.split('\n')  # Splitting the response by newlines
-    
+
     # Parsing m3u8 links and organizing them by quality
     m3u8_sources = []
     is_url_line = False
     url = ""
     for line in m3u8_links:
         if is_url_line:
-            m3u8_sources.append({'url': line.strip(), 'quality': quality, 'isM3U8': True})
+            m3u8_sources.append({'url': line.strip(), 'quality': quality.split('x')[-1], 'isM3U8': True})
             is_url_line = False
         if line.startswith('#EXT-X-STREAM-INF'):
             quality = line.split('RESOLUTION=')[-1].split(',')[0]
             is_url_line = True
-    
+
+    # Adding results[1][0] as an object with quality 'auto'
+    auto_quality = {'url': results[1][0], 'quality': 'auto', 'isM3U8': True}
+    m3u8_sources.append(auto_quality)
+
     # Creating the final sources array
-    final_sources = []
-    auto_quality_index = None
-    for i, source in enumerate(m3u8_sources):
-        if source['quality'] == 'auto':
-            auto_quality_index = i
-        else:
-            final_sources.append(source)
-    
-    # Moving the source with quality 'auto' to the front of the list
-    if auto_quality_index is not None:
-        final_sources.insert(0, m3u8_sources.pop(auto_quality_index))
+    final_sources = m3u8_sources
 
     return [{
         "name": 'SuperEmbed',

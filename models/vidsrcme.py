@@ -70,5 +70,5 @@ async def get(dbid,s=None,e=None,l='eng'):
     # ,{
     "name":'SuperEmbed',
     "sources":results[1][0] if len(results)==2 else 1500,
-    "subtitles":results[1][1] if len(results)==2 else 1500
+    "subtitles":results[1][1] if len(results)==2 else 1500,
     }]

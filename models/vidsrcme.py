@@ -23,9 +23,6 @@ async def vidsrcme(source,url):
             return 1506,_seed
         if "playhydrax.com" in location:
             return 1500,_seed
-        if "vidsrc.stream" in location:
-            req = await client.get(location, headers={"Referer": f"https://rcp.vidsrc.me/rcp/{source}"})
-            return await vidsrcpro.handle_vidsrcpro(req,source,_seed)
         if "2embed.cc" in location:
             return 1500,_seed
         if "multiembed.mov" in location:
@@ -62,12 +59,6 @@ async def get(dbid,s=None,e=None,l='eng'):
     sub_seed = results[0][1] if results[0] else 1500
     subtitles = await subtitle.subfetch(sub_seed,language) if sub_seed!=500 else 500
     return [{
-    "name":'VidSrcPRO',
-    "data":{
-            'file':results[0][0],
-            'sub':subtitles
-        },
-    },{
     "name":'SuperEmbed',
     "data":{
             'file':results[1][0] if len(results)==2 else 1500,

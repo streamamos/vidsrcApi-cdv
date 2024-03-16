@@ -61,14 +61,32 @@ async def get(dbid,s=None,e=None,l='eng'):
     print(results)
     sub_seed = results[0][1] if results[0] else 1500
     # subtitles = await subtitle.subfetch(sub_seed,language) if sub_seed!=500 else 500
+    m3u8_response = requests.get(results[1][0])  # Fetching m3u8 links from the provided URL
+    m3u8_links = m3u8_response.text.split('\n')  # Splitting the response by newlines
+
+    # Parsing m3u8 links and organizing them by quality
+    m3u8_sources = []
+    for line in m3u8_links:
+        if line.startswith('#EXT-X-STREAM-INF'):
+            quality = line.split('RESOLUTION=')[-1].split(',')[0]
+            url = next(m3u8_response).strip()
+            m3u8_sources.append({'url': url, 'quality': quality, 'isM3U8': True})
+
+    # Creating the final sources array
+    final_sources = []
+    auto_quality_index = None
+    for i, source in enumerate(m3u8_sources):
+        if source['quality'] == 'auto':
+            auto_quality_index = i
+        else:
+            final_sources.append(source)
+
+    # Moving the source with quality 'auto' to the front of the list
+    if auto_quality_index is not None:
+        final_sources.insert(0, m3u8_sources.pop(auto_quality_index))
+
     return [{
-    # "name":'VidSrcPRO',
-    # "data":{
-            # 'file':results[0][0],
-            # 'sub':subtitles
-        # },
-    # },{
-    "name":'SuperEmbed',
-    'sources':results[1][0] if len(results)==2 else 1500,
-    'subtitles':results[1][1] if len(results)==2 else 1500
+        "name": 'SuperEmbed',
+        'sources': final_sources,
+        'subtitles': [{'lang': sub['lang'], 'url': sub['file']} for sub in results[1][1]] if len(results) == 2 else 1500
     }]

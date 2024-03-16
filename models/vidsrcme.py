@@ -91,7 +91,7 @@ async def get(dbid,s=None,e=None,l='eng'):
         return [{
             "name": 'SuperEmbed',
             'sources': final_sources,
-            'subtitles': results[1][1] if len(results) == 2 else 1500
+            'subtitles': 'subtitles': [{'lang': sub['lang'], 'url': sub['file']} for sub in results[1][1]] if len(results) == 2 else []
         }]
     except Exception as e:
         return {"message": "An error occurred: " + str(e)}

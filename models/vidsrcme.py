@@ -88,10 +88,10 @@ async def get(dbid,s=None,e=None,l='eng'):
         # Creating the final sources array
         final_sources = m3u8_sources
 
-        return [{
+        return {
             "name": 'SuperEmbed',
             'sources': final_sources,
             'subtitles': [{'lang': sub['lang'], 'url': sub['file']} for sub in results[1][1]] if len(results) == 2 else 1500
-        }]
+        }
     except Exception as e:
         return {"message": "An error occurred: " + str(e)}

@@ -7,7 +7,7 @@ from . import vidsrcpro,superembed
 from . import subtitle
 async def vidsrcme(source,url):
     async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.get(f"https://rcp.vidsrc.me/rcp/{source}",headers={"Referer": url})
+        response = await client.get(f"https://vidsrc.stream/rcp/{source}",headers={"Referer": url})
         _html = BeautifulSoup(response.text, "html.parser")
         _encoded = _html.find("div", {"id": "hidden"}).get("data-h") if _html.find("div", {"id": "hidden"}) else None
         if not _encoded:return None
@@ -17,7 +17,7 @@ async def vidsrcme(source,url):
         for i in range(len(encoded_buffer)):decoded += chr(encoded_buffer[i] ^ ord(_seed[i % len(_seed)]))
         decoded_url = f"https:{decoded}" if decoded.startswith("//") else decoded
         
-        response = requests.get(decoded_url, allow_redirects=False, headers={"Referer": f"https://rcp.vidsrc.me/rcp/{source}"})
+        response = requests.get(decoded_url, allow_redirects=False, headers={"Referer": f"https://vidsrc.stream/rcp/{source}"})
         location = response.headers.get("Location")
         if location is None:
             return 1506,_seed
